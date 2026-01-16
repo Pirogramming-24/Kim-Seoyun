@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %} {% block head %}
+<title>사과마켓 - 물품 등록</title>
+<style>
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>물품 등록하기</h2>
+    <form action="{% url 'posts:create' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+
+        <button type="submit" class="btn btn-success">등록하기</button>
+    </form>
+</div>
+
+<script>
+    const input = document.getElementById("id_nutrition_photo");
+const fields = ["kcal", "carbohydrate", "protein", "fat"];
+
+if (input) {
+    input.addEventListener("change", async () => {
+        if (!input.files.length) return;
+
+        // 로딩 바 보여주기
+        const loadingDiv = document.getElementById("ocr-loading");
+        if (loadingDiv) loadingDiv.style.display = "block";
+
+        fields.forEach(name => {
+            const el = document.querySelector(`[name="${name}"]`);
+            if (el) {
+                el.type = "text"; 
+                el.value = "분석 중...";
+            }
+        });
+
+        const formData = new FormData();
+        formData.append("image", input.files[0]);
+
+        try {
+            // 2. URL 경로를 장고 name 기반으로 동적 생성
+            const res = await fetch("{% url 'posts:ocr' %}", { 
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie('csrftoken')
+                },
+                body: formData
+            });
+
+            if (!res.ok) throw new Error("Server Error");
+            const json = await res.json();
+
+            fields.forEach(name => {
+                const el = document.querySelector(`[name="${name}"]`);
+                if (el) {
+                    el.type = "number";
+                    el.step = "0.01";
+                    // json.data의 키값도 모델 필드명과 일치하는지 확인!
+                    el.value = (json.status === "success") ? json.data[name] : "";
+                }
+            });
+
+        } catch (error) {
+            // ... 에러 처리 로직
+        } finally {
+            if (loadingDiv) loadingDiv.style.display = "none";
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    
+
+    if (input) {
+    console.log("Input 요소를 찾았습니다!"); 
+    input.addEventListener("change", async () => {
+        console.log("파일이 선택되었습니다:", input.files[0].name);
+        // ... 나머지 코드
+    });
+} else {
+    console.error("id_nutrition_photo 요소를 찾지 못했습니다. ID를 확인하세요!");
+}
+}
+</script>
+{% endblock %}
