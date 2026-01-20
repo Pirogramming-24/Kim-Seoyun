@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="detail-container">
+    <div class="detail-content">
+        <!-- 왼쪽: 포스터 이미지 -->
+        <div class="detail-poster">
+            {% if review.poster_url %}
+            <img src="{{ review.poster_url }}" alt="{{ review.title }}">
+            {% else %}
+            <div class="no-poster-large">
+                <span>🎬</span>
+                <p>포스터 이미지 없음</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 오른쪽: 영화 정보 -->
+        <div class="detail-info">
+            <h1 class="detail-title">{{ review.title }}</h1>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <h4 class="info-label">감독</h4>
+                    <p class="info-value">{{ review.director }}</p>
+                </div>
+
+                <div class="info-box">
+                    <h4 class="info-label">주연배우</h4>
+                    <p class="info-value">{{ review.actor }}</p>
+                </div>
+
+                <div class="info-box">
+                    <h4 class="info-label">장르</h4>
+                    <p class="info-value">{{ review.genre }}</p>
+                </div>
+
+                <div class="info-box">
+                    <h4 class="info-label">개봉년도</h4>
+                    <p class="info-value">{{ review.release_year }}년</p>
+                </div>
+
+                <div class="info-box">
+                    <h4 class="info-label">러닝타임</h4>
+                    <p class="info-value">{{ review.runtime }}분</p>
+                </div>
+
+                <div class="info-box">
+                    <h4 class="info-label">별점</h4>
+                    <p class="info-value rating-stars">
+                        {% if review.rating >= 4.5 %}⭐⭐⭐⭐⭐
+                        {% elif review.rating >= 3.5 %}⭐⭐⭐⭐☆
+                        {% elif review.rating >= 2.5 %}⭐⭐⭐☆☆
+                        {% elif review.rating >= 1.5 %}⭐⭐☆☆☆
+                        {% elif review.rating >= 0.5 %}⭐☆☆☆☆
+                        {% else %}☆☆☆☆☆
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 리뷰 내용 섹션 -->
+    <div class="review-section">
+        <h3 class="review-section-title">
+            <span class="review-icon">📝</span> 나의 리뷰
+        </h3>
+        <div class="review-content-box">
+            <p class="review-text">{{ review.content }}</p>
+        </div>
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="detail-actions">
+        <a href="{% url 'reviews:review_list' %}" class="btn-action btn-back">← 목록으로</a>
+        <div class="action-group">
+            <a href="{% url 'reviews:review_update' review.id %}" class="btn-action btn-edit">수정</a>
+            <form action="{% url 'reviews:review_delete' review.id %}" method="post" style="display: inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-action btn-delete">삭제</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

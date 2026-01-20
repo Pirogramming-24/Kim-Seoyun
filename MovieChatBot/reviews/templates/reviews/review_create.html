@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-container">
+    <h3 class="form-title">새 리뷰 작성</h3>
+    <p class="form-subtitle">영화에 대한 솔직한 감상을 남겨보세요</p>
+
+    <form action="{% url 'reviews:review_create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="title" class="form-label">영화 제목</label>
+                <input 
+                    type="text" 
+                    id="title"
+                    name="title" 
+                    placeholder="영화 제목을 입력하세요" 
+                    class="form-input" 
+                    required 
+                />
+            </div>
+            <div class="form-group half">
+                <label for="release_year" class="form-label">개봉 년도</label>
+                <input 
+                    type="text" 
+                    id="release_year"
+                    name="release_year" 
+                    placeholder="개봉 년도 (예: 2024)" 
+                    class="form-input" 
+                    required 
+                />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="director" class="form-label">감독</label>
+                <input 
+                    type="text" 
+                    id="director"
+                    name="director" 
+                    placeholder="감독 이름을 입력하세요" 
+                    class="form-input" 
+                    required 
+                />
+            </div>
+            <div class="form-group half">
+                <label for="genre" class="form-label">장르</label>
+                <select id="genre" name="genre" class="form-select" required>
+                    <option value="">----------</option>
+                    <option value="액션">액션</option>
+                    <option value="코미디">코미디</option>
+                    <option value="드라마">드라마</option>
+                    <option value="스릴러">스릴러</option>
+                    <option value="로맨스">로맨스</option>
+                    <option value="SF">SF</option>
+                    <option value="판타지">판타지</option>
+                    <option value="애니메이션">애니메이션</option>
+                    <option value="공포">공포</option>
+                    <option value="다큐멘터리">다큐멘터리</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="actor" class="form-label">주연배우</label>
+            <input 
+                type="text" 
+                id="actor"
+                name="actor" 
+                placeholder="주연배우를 입력하세요 (여러 명일 경우 ,로 구분)" 
+                class="form-input" 
+                required 
+            />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half">
+                <label for="runtime" class="form-label">러닝타임(분)</label>
+                <input 
+                    type="text" 
+                    id="runtime"
+                    name="runtime" 
+                    placeholder="러닝타임 (분 단위)" 
+                    class="form-input" 
+                    required 
+                />
+            </div>
+            <div class="form-group half">
+                <label for="rating" class="form-label">별점</label>
+                <select id="rating" name="rating" class="form-select" required>
+                    <option value="">1점</option>
+                    <option value="0.5">0.5</option>
+                    <option value="1.0">1.0</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2.0">2.0</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3.0">3.0</option>
+                    <option value="3.5">3.5</option>
+                    <option value="4.0">4.0</option>
+                    <option value="4.5">4.5</option>
+                    <option value="5.0">5.0</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="content" class="form-label">리뷰 내용</label>
+            <textarea 
+                id="content"
+                name="content" 
+                placeholder="영화에 대한 리뷰를 작성해주세요" 
+                rows="8" 
+                class="form-textarea" 
+                required
+            ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="poster" class="form-label">포스터 이미지</label>
+            <div class="file-input-wrapper">
+                <input 
+                    type="file" 
+                    id="poster"
+                    name="poster" 
+                    accept="image/*"
+                    class="file-input"
+                />
+                <label for="poster" class="file-input-label">
+                    파일 선택 <span class="file-name">선택된 파일 없음</span>
+                </label>
+                <p class="file-input-hint">이미지 파일(jpg, png 등)을 업로드하세요.</p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'reviews:review_list' %}" class="btn-cancel">취소</a>
+            <button type="submit" class="btn-submit">리뷰 작성</button>
+        </div>
+    </form>
+</div>
+
+<script>
+// 파일 선택 시 파일명 표시
+document.getElementById('poster').addEventListener('change', function(e) {
+    const fileName = e.target.files[0]?.name || '선택된 파일 없음';
+    document.querySelector('.file-name').textContent = fileName;
+});
+</script>
+
+{% endblock content %}

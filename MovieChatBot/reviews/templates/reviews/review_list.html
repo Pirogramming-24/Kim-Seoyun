@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3 class="main_title">나의 영화 컬렉션</h3>
+
+<div class="stats-container">
+    <div class="stat-card">
+        <p class="stat-number">{{ reviews.paginator.count }}</p> 
+        <p class="stat-label">총 영화</p>
+    </div>
+    <div class="stat-card">
+        <p class="stat-number">{{ tmdb_count }}</p>
+        <p class="stat-label">TMDB 영화</p>
+    </div>
+    <div class="stat-card">
+        <p class="stat-number">{{ manual_count }}</p>
+        <p class="stat-label">직접 추가</p>
+    </div>
+</div>
+
+<form action="" method="get" class="search-container" id="searchForm">
+    <input type="hidden" name="sort" value="{{ current_sort|default:'latest' }}">
+    <input type="hidden" name="filter" value="{{ current_filter|default:'all' }}">
+    
+    <input type="text" name="q" value="{{ search_query|default:'' }}" class="search-input" placeholder="전체 영화 제목, 감독, 배우 검색...">
+    <button type="submit" class="search-button">검색</button>
+</form>
+
+<div class="filter-sort-container">
+    <div class="filter-section">
+        <span class="section-label">필터:</span>
+        <a href="?filter=all&sort={{ current_sort }}&q={{ search_query }}" class="filter-btn {% if current_filter == 'all' or not current_filter %}active{% endif %}">전체</a>
+        <a href="?filter=tmdb&sort={{ current_sort }}&q={{ search_query }}" class="filter-btn {% if current_filter == 'tmdb' %}active{% endif %}">TMDB</a>
+        <a href="?filter=manual&sort={{ current_sort }}&q={{ search_query }}" class="filter-btn {% if current_filter == 'manual' %}active{% endif %}">직접 추가</a>
+    </div>
+    
+    <div class="sort-section">
+        <span class="section-label">정렬:</span>
+        <a href="?sort=latest&filter={{ current_filter }}&q={{ search_query }}" class="sort-btn {% if current_sort == 'latest' or not current_sort %}active{% endif %}">최신순</a>
+        <a href="?sort=title&filter={{ current_filter }}&q={{ search_query }}" class="sort-btn {% if current_sort == 'title' %}active{% endif %}">제목순</a>
+        <a href="?sort=rating&filter={{ current_filter }}&q={{ search_query }}" class="sort-btn {% if current_sort == 'rating' %}active{% endif %}">평점순</a>
+        <a href="?sort=year&filter={{ current_filter }}&q={{ search_query }}" class="sort-btn {% if current_sort == 'year' %}active{% endif %}">최신년도순</a>
+    </div>
+</div>
+
+<div class="movie-grid" id="movieGrid">
+    {% for review in reviews %}
+    <div class="movie-card" data-source="{{ review.source }}">
+        {% if review.source == 'tmdb' %}
+        <span class="tmdb-badge" style="position: absolute; top: 10px; left: 10px; background: #01b4e4; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; z-index: 1;">TMDB</span>
+        {% endif %}
+        
+        <div class="movie-poster">
+            {% if review.poster_url %}
+            <img src="{{ review.poster_url }}" alt="{{ review.title }}">
+            {% else %}
+            <div class="no-poster">이미지 없음</div>
+            {% endif %}
+        </div>
+        
+        <div class="movie-info">
+            <h4 class="movie-title">
+                <a href="{% url 'reviews:review_detail' review.id %}">{{ review.title }}</a>
+            </h4>
+            <p class="movie-year">{{ review.release_year }}</p>
+            <div class="movie-rating">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= review.rating %}⭐{% else %}☆{% endif %}
+                {% endfor %}
+            </div>
+            <p class="movie-genre">감독: {{ review.director|default:"미상" }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <div class="no-results-wrapper" style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
+        <p class="no-movies">검색 결과가 없습니다.</p>
+        <a href="{% url 'reviews:review_list' %}" style="color: #00ff00; text-decoration: underline;">전체 목록으로 돌아가기</a>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination-container" style="display: flex; justify-content: center; margin-top: 40px; gap: 5px;">
+    {% if reviews.has_previous %}
+        <a href="?page=1&sort={{ current_sort }}&filter={{ current_filter }}&q={{ search_query }}" class="page-btn">&laquo; 처음</a>
+        <a href="?page={{ reviews.previous_page_number }}&sort={{ current_sort }}&filter={{ current_filter }}&q={{ search_query }}" class="page-btn">이전</a>
+    {% endif %}
+
+    {% for num in reviews.paginator.page_range %}
+        {% if reviews.number == num %}
+            <span class="page-btn active" style="background-color: #00ff00; color: #000; border-color: #00ff00; font-weight: bold;">{{ num }}</span>
+        {% elif num > reviews.number|add:'-3' and num < reviews.number|add:'3' %}
+            <a href="?page={{ num }}&sort={{ current_sort }}&filter={{ current_filter }}&q={{ search_query }}" class="page-btn">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if reviews.has_next %}
+        <a href="?page={{ reviews.next_page_number }}&sort={{ current_sort }}&filter={{ current_filter }}&q={{ search_query }}" class="page-btn">다음</a>
+        <a href="?page={{ reviews.paginator.num_pages }}&sort={{ current_sort }}&filter={{ current_filter }}&q={{ search_query }}" class="page-btn">마지막 &raquo;</a>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[name="q"]');
+    
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('searchForm').submit();
+        }
+    });
+
+
+    console.log("현재 필터: {{ current_filter }}");
+    console.log("현재 정렬: {{ current_sort }}");
+});
+</script>
+
+{% endblock content %}

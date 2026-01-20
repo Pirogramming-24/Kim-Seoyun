@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Movie Reviews</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'reset.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <h1 class="logo">
+                <a href="{% url 'reviews:review_list' %}">
+                    🎬 My Movie Reviews
+                </a>
+            </h1>
+            
+            <nav class="header-nav">
+                <a href="{% url 'reviews:review_list' %}" class="nav-btn">전체 리뷰</a>
+                <a href="{% url 'reviews:review_create' %}" class="nav-btn nav-btn-primary">+ 새 리뷰</a>
+                <a href="{% url 'reviews:review_chatbot' %}" class="nav-btn">챗봇 추천</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+    
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
