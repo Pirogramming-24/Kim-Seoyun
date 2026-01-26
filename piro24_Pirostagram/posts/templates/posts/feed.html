@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}피드 - Pirostagram{% endblock %}
+
+{% block content %}
+<div class="main-container" style="max-width: 600px; margin: 0 auto;">
+
+    <div class="story-wrapper" style="display: flex; gap: 15px; padding: 15px; overflow-x: auto; background: white; border: 1px solid #dbdbdb; border-radius: 8px; margin-top: 20px; scrollbar-width: none; -ms-overflow-style: none;">
+        <a href="{% url 'posts:story_create' %}" style="text-decoration: none; text-align: center; flex-shrink: 0;">
+            <div style="width: 62px; height: 62px; border-radius: 50%; border: 1px solid #dbdbdb; display: flex; align-items: center; justify-content: center; background: #fafafa; color: #8e8e8e; font-size: 1.5rem;">
+                +
+            </div>
+            <p style="font-size: 0.75rem; margin-top: 5px; color: #262626; margin-bottom: 0;">내 스토리</p>
+        </a>
+
+        {% for story in stories %}
+        <a href="{% url 'posts:story_detail' story.id %}" style="text-decoration: none; text-align: center; flex-shrink: 0;">
+            <div style="width: 62px; height: 62px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: block;">
+                <div style="width: 100%; height: 100%; border-radius: 50%; border: 2px solid white; overflow: hidden; background: white;">
+                    {% if story.user.profile_image %}
+                        <img src="{{ story.user.profile_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% endif %}
+                </div>
+            </div>
+            <p style="font-size: 0.75rem; margin-top: 5px; color: #262626; margin-bottom: 0; width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                {{ story.user.username }}
+            </p>
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="post-list" style="margin-top: 20px;">
+        {% for post in posts %}
+        <div class="post-item" style="background: white; border: 1px solid #dbdbdb; border-radius: 8px; margin-bottom: 24px;">
+            
+            <div style="padding: 12px 15px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center;">
+                    {% if post.user.profile_image %}
+                        <img src="{{ post.user.profile_image.url }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px;">
+                    {% endif %}
+                    <a href="{% url 'users:profile' post.user.username %}" style="text-decoration: none; color: #262626; font-weight: 600; font-size: 0.9rem;">
+                        {{ post.user.username }}
+                    </a>
+                </div>
+                <a href="{% url 'posts:post_detail' post.id %}" style="text-decoration: none; color: #8e8e8e; font-size: 0.8rem;">상세보기</a>
+            </div>
+
+            <div style="width: 100%; background: #fafafa; border-top: 1px solid #efefef; border-bottom: 1px solid #efefef;">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" style="width: 100%; display: block; max-height: 600px; object-fit: contain;">
+                {% endif %}
+            </div>
+
+            <div style="padding: 15px;">
+                <div style="margin-bottom: 10px;">
+                    <form action="{% url 'posts:like_toggle' post.id %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer; font-size: 1.3rem;">
+                            {% if post.is_liked %}
+                                <span style="color: #ed4956;">❤️</span>
+                            {% else %}
+                                <span>🤍</span>
+                            {% endif %}
+                            <span style="font-size: 0.95rem; font-weight: 600; vertical-align: middle; color: #262626; margin-left: 5px;">
+                                {{ post.likes_count }}
+                            </span>
+                        </button>
+                    </form>
+                </div>
+
+                <div style="font-size: 0.9rem; line-height: 1.4;">
+                    <span style="font-weight: 600; margin-right: 5px;">{{ post.user.username }}</span>
+                    {{ post.content }}
+                </div>
+
+                <div style="margin-top: 10px; border-top: 1px solid #efefef; padding-top: 10px;">
+                    {% for comment in post.comments.all|slice:":2" %}
+                    <div style="font-size: 0.85rem; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <span style="font-weight: 600;">{{ comment.user.username }}</span> {{ comment.content }}
+                        </div>
+                        
+                        {% if comment.user == request.user %}
+                        <div style="flex-shrink: 0; margin-left: 10px;">
+                            <a href="{% url 'posts:comment_update' comment.id %}" style="font-size: 0.75rem; color: #8e8e8e; text-decoration: none;">수정</a>
+                            <a href="{% url 'posts:comment_delete' comment.id %}" style="font-size: 0.75rem; color: #ed4956; text-decoration: none; margin-left: 5px;" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if post.comments.count > 2 %}
+                    <a href="{% url 'posts:post_detail' post.id %}" style="font-size: 0.8rem; color: #8e8e8e; text-decoration: none; display: block; margin-top: 5px;">댓글 {{ post.comments.count }}개 모두 보기</a>
+                    {% endif %}
+                </div>
+
+                <form action="{% url 'posts:add_comment' post.id %}" method="POST" style="margin-top: 12px; display: flex; align-items: center; border-top: 1px solid #efefef; padding-top: 10px;">
+                    {% csrf_token %}
+                    <input type="text" name="content" placeholder="댓글 달기..." required
+                           style="flex-grow: 1; border: none; outline: none; font-size: 0.85rem; padding: 5px 0;">
+                    <button type="submit" style="background: none; border: none; color: #0095f6; font-weight: 600; font-size: 0.85rem; cursor: pointer;">게시</button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 80px 20px; color: #8e8e8e;">
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">피드가 비어있습니다.</p>
+            <p style="font-size: 0.9rem;">친구를 팔로우하고 새로운 소식을 확인해보세요!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* 스토리 영역 스크롤바 숨기기 */
+    .story-wrapper::-webkit-scrollbar { display: none; }
+</style>
+{% endblock %}

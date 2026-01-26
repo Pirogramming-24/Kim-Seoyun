@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}회원가입 - Pirostagram{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh;">
+    <div style="background-color: white; border: 1px solid #dbdbdb; width: 100%; max-width: 350px; padding: 40px; box-sizing: border-box; text-align: center; border-radius: 8px;">
+        
+        <h1 style="font-family: 'Lobster', cursive; font-size: 2.5rem; margin-bottom: 10px;">Pirostagram</h1>
+        <p style="color: #8e8e8e; font-weight: 600; font-size: 1.1rem; margin-bottom: 20px;">친구들의 사진을 보려면 가입하세요.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div style="margin-bottom: 10px; text-align: left;">
+                <input type="{{ field.field.widget.input_type }}" 
+                       name="{{ field.name }}" 
+                       placeholder="{{ field.label }}"
+                       style="width: 100%; padding: 10px; border: 1px solid #dbdbdb; border-radius: 4px; background: #fafafa; font-size: 0.8rem; box-sizing: border-box;">
+                
+                {% for error in field.errors %}
+                    <small style="display: block; font-size: 0.75rem; color: #ed4956; margin-top: 3px;">{{ error }}</small>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" style="width: 100%; background-color: #0095f6; color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+                가입하기
+            </button>
+        </form>
+    </div>
+
+    <div style="background-color: white; border: 1px solid #dbdbdb; width: 100%; max-width: 350px; padding: 20px; margin-top: 10px; text-align: center; box-sizing: border-box; border-radius: 8px;">
+        <p style="margin: 0; font-size: 0.9rem;">
+            계정이 있으신가요? <a href="{% url 'users:login' %}" style="color: #0095f6; text-decoration: none; font-weight: 600;">로그인하기</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

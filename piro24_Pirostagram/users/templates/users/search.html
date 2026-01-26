@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="background: white; border: 1px solid #dbdbdb; padding: 20px;">
+    <form action="{% url 'users:search' %}" method="GET" style="display: flex; gap: 10px;">
+        <input type="text" name="q" value="{{ query }}" placeholder="검색" style="flex: 1; padding: 8px; border: 1px solid #dbdbdb; border-radius: 4px;">
+        <button type="submit" style="background: #0095f6; color: white; border: none; padding: 8px 15px; border-radius: 4px;">검색</button>
+    </form>
+
+    <div style="margin-top: 20px;">
+        {% for user in users %}
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: #eee;"></div>
+                    <a href="{% url 'users:profile' user.username %}" style="text-decoration: none; color: black; font-weight: bold;">{{ user.username }}</a>
+                </div>
+            </div>
+        {% empty %}
+            {% if query %}
+                <p style="text-align: center; color: #8e8e8e;">검색 결과가 없습니다.</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

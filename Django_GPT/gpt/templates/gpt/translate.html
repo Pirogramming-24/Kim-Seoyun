@@ -1,0 +1,32 @@
+{% extends "gpt/base.html" %}
+
+{% block title %}Translate{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h3>Translate Chat(한->영)</h3>
+
+        <div id="chat-box" class="border p-3 mb-3" style="height:400px; overflow-y:scroll; background:#f8f9fa;">
+            {% for msg in chat_history %}
+                <div class="mb-2 {% if msg.role == 'user' %}text-end{% else %}text-start{% endif %}">
+                    <span class="badge {% if msg.role == 'user' %}bg-primary{% else %}bg-secondary{% endif %}">
+                        {{ msg.role|title }}
+                    </span>
+                    <div class="d-inline-block border p-2 rounded" style="max-width:70%;">
+                        {{ msg.content }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="text" class="form-control" placeholder="메시지를 입력하세요" required>
+                <button class="btn btn-primary" type="submit">전송</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

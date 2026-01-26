@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}게시글 상세 - Pirostagram{% endblock %}
+
+{% block content %}
+<div class="post-detail-container" style="max-width: 600px; margin: 30px auto; background: white; border: 1px solid #dbdbdb; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    
+    <div class="post-header" style="padding: 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #efefef;">
+        <div style="display: flex; align-items: center;">
+            {% if post.user.profile_image %}
+                <img src="{{ post.user.profile_image.url }}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 12px; border: 1px solid #dbdbdb;">
+            {% else %}
+                <img src="{% static 'images/default_profile.png' %}" style="width: 35px; height: 35px; border-radius: 50%; margin-right: 12px; border: 1px solid #dbdbdb;">
+            {% endif %}
+            <span style="font-weight: 600; font-size: 0.95rem;">{{ post.user.username }}</span>
+        </div>
+
+        {% if user == post.user %}
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="{% url 'posts:post_update' post.id %}" style="text-decoration: none; color: #0095f6; font-size: 0.85rem; font-weight: 600;">수정</a>
+            
+            <form action="{% url 'posts:post_delete' post.id %}" method="POST" onsubmit="return confirm('정말 이 게시글을 삭제하시겠습니까?');" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #ed4956; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0;">삭제</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="post-image-area" style="background-color: #fafafa;">
+        {% if post.image %}
+            <img src="{{ post.image.url }}" alt="Post Image" style="width: 100%; display: block; max-height: 700px; object-fit: contain;">
+        {% else %}
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: #ccc;">이미지가 없습니다.</div>
+        {% endif %}
+    </div>
+
+    <div class="post-body" style="padding: 15px;">
+        <div class="actions" style="margin-bottom: 12px;">
+            <form action="{% url 'posts:like_toggle' post.id %}" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; padding: 0; margin-right: 10px;">
+                    ❤️ <span style="font-size: 1rem; font-weight: 600; vertical-align: middle;">{{ post.likes.count }}</span>
+                </button>
+            </form>
+        </div>
+        
+        <div class="caption">
+            <p style="margin: 0; line-height: 1.5;">
+                <span style="font-weight: 600; margin-right: 8px;">{{ post.user.username }}</span>
+                {{ post.content }}
+            </p>
+        </div>
+        <small style="color: #8e8e8e; font-size: 0.75rem; margin-top: 10px; display: block;">{{ post.created_at|date:"Y년 m월 d일" }}</small>
+    </div>
+
+    <div class="post-comments" style="padding: 0 15px 15px; border-top: 1px solid #efefef;">
+        <h5 style="margin: 15px 0 10px; font-size: 0.9rem; color: #262626;">댓글</h5>
+        <div class="comment-scroll" style="max-height: 250px; overflow-y: auto;">
+            {% for comment in post.comments.all %}
+                <div style="margin-bottom: 8px; font-size: 0.9rem;">
+                    <span style="font-weight: 600; margin-right: 6px;">{{ comment.user.username }}</span>
+                    <span>{{ comment.content }}</span>
+                </div>
+            {% empty %}
+                <p style="color: #8e8e8e; font-size: 0.85rem;">아직 댓글이 없습니다.</p>
+            {% endfor %}
+        </div>
+
+        {% if user.is_authenticated %}
+            <form action="{% url 'posts:add_comment' post.id %}" method="POST" style="display: flex; margin-top: 15px; border-top: 1px solid #efefef; padding-top: 15px;">
+                {% csrf_token %}
+                <input type="text" name="content" placeholder="댓글 달기..." required 
+                       style="flex-grow: 1; border: none; outline: none; font-size: 0.9rem; padding: 5px;">
+                <button type="submit" style="background: none; border: none; color: #0095f6; font-weight: 600; cursor: pointer; padding: 5px;">게시</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

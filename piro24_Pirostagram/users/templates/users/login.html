@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}로그인 - Pirostagram{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh;">
+    <div style="background-color: white; border: 1px solid #dbdbdb; width: 100%; max-width: 350px; padding: 40px; box-sizing: border-box; text-align: center; border-radius: 8px;">
+        
+        <h1 style="font-family: 'Lobster', cursive; font-size: 2.5rem; margin-bottom: 30px;">Pirostagram</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="username" placeholder="사용자 이름" required
+                       style="width: 100%; padding: 10px; border: 1px solid #dbdbdb; border-radius: 4px; background: #fafafa; font-size: 0.8rem; box-sizing: border-box;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <input type="password" name="password" placeholder="비밀번호" required
+                       style="width: 100%; padding: 10px; border: 1px solid #dbdbdb; border-radius: 4px; background: #fafafa; font-size: 0.8rem; box-sizing: border-box;">
+            </div>
+
+            <button type="submit" style="width: 100%; background-color: #0095f6; color: white; border: none; padding: 7px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                로그인
+            </button>
+        </form>
+
+        {% if messages %}
+        <div style="margin-top: 15px; color: #ed4956; font-size: 0.85rem;">
+            {% for message in messages %} {{ message }} {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="background-color: white; border: 1px solid #dbdbdb; width: 100%; max-width: 350px; padding: 20px; margin-top: 10px; text-align: center; box-sizing: border-box; border-radius: 8px;">
+        <p style="margin: 0; font-size: 0.9rem;">
+            계정이 없으신가요? <a href="{% url 'users:signup' %}" style="color: #0095f6; text-decoration: none; font-weight: 600;">가입하기</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

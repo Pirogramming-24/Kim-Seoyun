@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pirostagram{% endblock %}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #fafafa; }
+        nav { 
+            display: flex; justify-content: space-around; align-items: center; 
+            padding: 10px 20px; background: white; border-bottom: 1px solid #dbdbdb;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+        }
+        .container { max-width: 600px; margin: 80px auto; padding: 0 20px; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: black; font-weight: bold; font-size: 0.9rem; }
+        .logo a { text-decoration: none; color: black; font-size: 1.5rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <a href="{% url 'posts:feed' %}">Pirostagram</a>
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'users:search' %}">🔍 검색</a>
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'posts:post_create' %}">➕ 올리기</a>
+                <a href="{% url 'users:profile' user.username %}">👤 프로필</a>
+                <a href="{% url 'users:logout' %}">로그아웃</a>
+            {% else %}
+                <a href="{% url 'users:login' %}">로그인</a>
+                <a href="{% url 'users:signup' %}">회원가입</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

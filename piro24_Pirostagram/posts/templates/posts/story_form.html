@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="background: white; border: 1px solid #dbdbdb; padding: 30px;">
+    <h3>새 스토리 추가</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="margin-bottom: 20px;">
+            <input type="file" name="images" accept="image/*" multiple required>
+            <p style="font-size: 0.8rem; color: #8e8e8e;">여러 장의 사진을 선택할 수 있습니다.</p>
+        </div>
+        <button type="submit" style="background: #0095f6; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">스토리 공유</button>
+    </form>
+</div>
+{% endblock %}

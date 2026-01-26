@@ -1,0 +1,44 @@
+/* static/css/feed.css */
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.post-card {
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-content {
+    padding: 10px;
+}
+
+.post-img {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+.post-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+}

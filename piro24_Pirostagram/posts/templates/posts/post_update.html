@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}게시글 - Pirostagram{% endblock %}
+
+{% block content %}
+<h2>게시물 수정</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label>현재 이미지:</label><br>
+        <img src="{{ post.image.url }}" width="200"><br>
+        <input type="file" name="image" accept="image/*">
+    </div>
+
+    <div>
+        <textarea name="content" rows="5" cols="40">{{ post.content }}</textarea>
+    </div>
+
+    <button type="submit">수정 완료</button>
+</form>
+<a href="{% url 'posts:feed' %}">취소</a>
+{% endblock %}

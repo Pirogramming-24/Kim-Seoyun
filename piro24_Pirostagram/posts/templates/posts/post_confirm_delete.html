@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}게시글 - Pirostagram{% endblock %}
+
+{% block content %}
+<h2>정말 이 게시글을 삭제하시겠습니까?</h2>
+<p>{{ post.content|truncatechars:30 }}</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" style="color: red;">삭제 확정</button>
+</form>
+<a href="{% url 'posts:feed' %}">취소</a>
+{% endblock %}
